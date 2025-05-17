@@ -35,6 +35,7 @@ class GoogleLoginCallback(APIView):
 
 class CustomConfirmEmailView(ConfirmEmailView):
     template_name = 'auth/email_confirm.html'
+    error_template_name = 'auth/email_confirm_error.html'
 
     def get_template_names(self):
         return [self.template_name]
@@ -58,5 +59,9 @@ class CustomConfirmEmailView(ConfirmEmailView):
             self.object = self.get_object()
             self.object.confirm(request)
             return HttpResponseRedirect(settings.LOGIN_REDIRECT_URL)
-        except Exception:
-            return HttpResponseRedirect('/error-page')
+        except Exception as e:
+            context = {
+                'error': str(e),
+                'confirm_url': request.path,
+            }
+            return TemplateResponse(request, self.error_template_name, context)
