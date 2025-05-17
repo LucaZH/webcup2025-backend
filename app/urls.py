@@ -12,4 +12,6 @@ urlpatterns = [
     path('pages/<uuid:pk>/share/', views.DeparturePageShareView.as_view(), name='departurepage-share'),
     path('pages/<uuid:pk>/view/', views.DeparturePageViewReadingView.as_view(), name='departurepage-view'),
     path('pages/<uuid:pk>/vote/', views.VoteView.as_view(), name='departure-page-vote'),
+    
+    path('chat/mistral/', views.MistralChatAPI.as_view(), name='mistral-chat'),
 ]
