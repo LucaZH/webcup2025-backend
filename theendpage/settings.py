@@ -144,6 +144,7 @@ ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 
 LOGIN_URL = str(os.getenv("HOST", "http://localhost:8000/")) + "login/"
 LOGIN_REDIRECT_URL = LOGIN_URL
+FRONT_HOST = os.getenv("HOST")
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -157,6 +158,8 @@ REST_AUTH = {
     'LOGOUT_URL': LOGIN_URL,
     'JWT_AUTH_HTTPONLY': False,
 }
+
+ACCOUNT_ADAPTER = "auth.adapters.CustomAccountAdapter"
 
 # Google OAuth
 GOOGLE_OAUTH_CLIENT_ID = os.getenv("GOOGLE_OAUTH_CLIENT_ID")
