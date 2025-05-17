@@ -47,6 +47,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'theendpage.urls'
+FORCE_SCRIPT_NAME = '/theendpage'
 
 TEMPLATES = [
     {
@@ -93,7 +94,7 @@ USE_I18N = True
 USE_TZ = True
 
 # Static & Media files
-STATIC_URL = '/static/'
+STATIC_URL = '/theendpage/static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
