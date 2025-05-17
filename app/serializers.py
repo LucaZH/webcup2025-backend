@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser, DeparturePage, EphemeralReading
+from .models import CustomUser, DeparturePage, EphemeralReading, Vote
 from dj_rest_auth.serializers import UserDetailsSerializer
 from django.contrib.auth import get_user_model
 
@@ -39,7 +39,7 @@ class DeparturePageCreateSerializer(serializers.ModelSerializer):
         fields = [
             'title', 'content', 'design_data', 'template_id',
             'is_public', 'is_anonymous', 'is_ephemeral',
-            'ending_type', 'tone'
+            'ending_type', 'tone', 'votes_count'
         ]
 
 
@@ -48,3 +48,25 @@ class EphemeralReadingSerializer(serializers.ModelSerializer):
         model = EphemeralReading
         fields = ['id', 'departure_page', 'has_been_viewed', 'view_date']
         read_only_fields = ['id', 'has_been_viewed', 'view_date']
+
+
+class VoteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vote
+        fields = ['id', 'departure_page', 'user', 'created_at']
+        read_only_fields = ['id', 'user', 'created_at']
+    
+    def create(self, validated_data):
+        user = self.context['request'].user
+        validated_data['user'] = user
+        
+        departure_page = validated_data.get('departure_page')
+        existing_vote = Vote.objects.filter(
+            departure_page=departure_page,
+            user=user
+        ).first()
+        
+        if existing_vote:
+            return existing_vote
+            
+        return super().create(validated_data)

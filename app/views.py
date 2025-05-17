@@ -6,7 +6,7 @@ from django.utils import timezone
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 
-from .models import CustomUser, DeparturePage, EphemeralReading
+from .models import CustomUser, DeparturePage, EphemeralReading, Vote
 from .serializers import (
     CustomUserDetailsSerializer, DeparturePageSerializer, DeparturePageCreateSerializer
 )
@@ -177,4 +177,48 @@ class DeparturePageViewReadingView(APIView):
         reading.save()
         
         serializer = DeparturePageSerializer(page)
+        return Response(serializer.data)
+    
+class VoteView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def post(self, request, pk):
+
+        departure_page = get_object_or_404(DeparturePage, pk=pk)
+        
+        existing_vote = Vote.objects.filter(
+            departure_page=departure_page,
+            user=request.user
+        ).first()
+        
+        if existing_vote:
+            return Response(
+                {'detail': 'You have already voted on this departure page.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        vote = Vote(departure_page=departure_page, user=request.user)
+        vote.save()
+        
+        serializer = DeparturePageSerializer(departure_page, context={'request': request})
+        return Response(serializer.data)
+    
+    def delete(self, request, pk):
+
+        departure_page = get_object_or_404(DeparturePage, pk=pk)
+        
+        vote = Vote.objects.filter(
+            departure_page=departure_page,
+            user=request.user
+        ).first()
+        
+        if not vote:
+            return Response(
+                {'detail': 'You have not voted on this departure page.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        vote.delete()
+        
+        serializer = DeparturePageSerializer(departure_page, context={'request': request})
         return Response(serializer.data)

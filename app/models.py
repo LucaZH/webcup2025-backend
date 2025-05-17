@@ -54,9 +54,11 @@ class DeparturePage(models.Model):
     is_ephemeral = models.BooleanField(default=True)
     ending_type = models.CharField(max_length=20, choices=ENDING_TYPE_CHOICES, default=OTHER)
     tone = models.CharField(max_length=20, choices=TONE_CHOICES, default=NOSTALGIC)
+    votes_count = models.PositiveIntegerField(default=0)
     
     def __str__(self):
         return f"{self.title}"
+
 
 class EphemeralReading(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -69,3 +71,27 @@ class EphemeralReading(models.Model):
     class Meta:
         unique_together = ['departure_page', 'viewer']
 
+
+class Vote(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    departure_page = models.ForeignKey(DeparturePage, on_delete=models.CASCADE, related_name='votes')
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='votes')
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ['departure_page', 'user']
+    
+    def save(self, *args, **kwargs):
+        is_new_vote = self.pk is None
+        
+        super().save(*args, **kwargs)
+        
+        if is_new_vote:
+            self.departure_page.votes_count += 1
+            self.departure_page.save(update_fields=['votes_count'])
+    
+    def delete(self, *args, **kwargs):
+        self.departure_page.votes_count -= 1
+        self.departure_page.save(update_fields=['votes_count'])
+        
+        super().delete(*args, **kwargs)
