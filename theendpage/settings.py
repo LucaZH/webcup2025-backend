@@ -145,6 +145,8 @@ ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 LOGIN_URL = str(os.getenv("HOST", "http://localhost:8000/")) + "login/"
 LOGIN_REDIRECT_URL = LOGIN_URL
 FRONT_HOST = os.getenv("HOST")
+BACKEND_HOST = os.getenv("BACKEND_HOST")
+
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
