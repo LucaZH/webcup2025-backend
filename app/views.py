@@ -38,12 +38,10 @@ class CurrentUserView(APIView):
 
 
 class DeparturePageListView(APIView):
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     
     def get(self, request):
-        user = request.user
         queryset = DeparturePage.objects.filter(
-            Q(user=user) | (Q(is_public=True) & ~Q(user=user))
+            Q(is_public=True)
         )
         
         search = request.query_params.get('search')
@@ -60,12 +58,12 @@ class DeparturePageListView(APIView):
             queryset = queryset.order_by(ordering)
         else:
             queryset = queryset.order_by('-creation_date')
-            
-        serializer = DeparturePageSerializer(queryset, many=True)
-        return Response(serializer.data)
+        
+        limited_data = queryset.values('id', 'title', 'votes_count', 'tone')
+        
+        return Response(limited_data)
     
     def post(self, request):
-        """Create a new departure page"""
         serializer = DeparturePageCreateSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user)
