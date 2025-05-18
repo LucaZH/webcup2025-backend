@@ -34,8 +34,8 @@ class GoogleAuthCallbackView(APIView):
         data = {
             'code': code,
             'client_id': settings.GOOGLE_OAUTH_CLIENT_ID,
-            'client_secret': settings.OAUTH_CLIENT_SECRET,
-            'redirect_uri': settings.OAUTH_CALLBACK_URL,
+            'client_secret': settings.GOOGLE_OAUTH_CLIENT_SECRET,
+            'redirect_uri': settings.GOOGLE_OAUTH_CALLBACK_URL,
             'grant_type': 'authorization_code'
         }
 
