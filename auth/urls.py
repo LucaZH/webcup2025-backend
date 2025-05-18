@@ -24,6 +24,6 @@ urlpatterns = [
         name="password_reset_confirm"
     ),
     
-    path("google/", GoogleLogin.as_view(), name="google_login"),
+    # path("google/", GoogleLogin.as_view(), name="google_login"),
     path("google/callback/", GoogleAuthCallbackView.as_view(), name="google_login_callback"),
 ]
