@@ -34,14 +34,21 @@ class DeparturePageSerializer(serializers.ModelSerializer):
 
 
 class DeparturePageCreateSerializer(serializers.ModelSerializer):
+    image_url = serializers.SerializerMethodField()
+
     class Meta:
         model = DeparturePage
         fields = [
             'title', 'content', 'design_data', 'template_id',
             'is_public', 'is_anonymous', 'is_ephemeral',
-            'ending_type', 'tone', 'votes_count'
+            'ending_type', 'tone', 'votes_count', 'image', 'image_url'
         ]
 
+    def get_image_url(self, obj):
+        request = self.context.get('request')
+        if obj.image and request:
+            return request.build_absolute_uri(obj.image.url)
+        return None
 
 class EphemeralReadingSerializer(serializers.ModelSerializer):
     class Meta:

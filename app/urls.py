@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('users/', views.UserListView.as_view(), name='user-list'),
@@ -14,4 +16,4 @@ urlpatterns = [
     path('pages/<uuid:pk>/vote/', views.VoteView.as_view(), name='departure-page-vote'),
     
     path('chat/mistral/', views.MistralChatAPI.as_view(), name='mistral-chat'),
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
