@@ -1,6 +1,6 @@
 from django.urls import path, re_path, include
 from django.views.generic import TemplateView
-from auth.views import CustomConfirmEmailView, GoogleLogin, GoogleLoginCallback
+from auth.views import CustomConfirmEmailView, GoogleAuthCallbackView, GoogleLogin
 from dj_rest_auth.views import PasswordResetConfirmView
 
 urlpatterns = [
@@ -25,5 +25,5 @@ urlpatterns = [
     ),
     
     path("google/", GoogleLogin.as_view(), name="google_login"),
-    path("google/callback/", GoogleLoginCallback.as_view(), name="google_login_callback"),
+    path("google/callback/", GoogleAuthCallbackView.as_view(), name="google_login_callback"),
 ]
